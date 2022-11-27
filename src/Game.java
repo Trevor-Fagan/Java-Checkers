@@ -7,9 +7,9 @@ import java.awt.event.MouseEvent;
 import java.util.Random;
 
 public class Game extends JPanel {
-    static Player main_player = new Player();
-    static ComputerPlayer computer_player = new ComputerPlayer();
     static public PlayerChecker BoardPositions[][] = new PlayerChecker[8][8];
+    static public PlayerChecker TempPositions[][] = new PlayerChecker[8][8];
+    static private boolean playerMove = true;
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -47,7 +47,44 @@ public class Game extends JPanel {
                 }
             }
         }
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (TempPositions[i][j] != null) {
+                    g2.setColor(Color.BLUE);
+                    g2.fillOval(TempPositions[i][j].xpos, TempPositions[i][j].ypos + 8, 70, 50);
+                }
+            }
+        }
     }
+
+    public static boolean checkWin() {
+        boolean player_has_checker = false;
+        boolean computer_has_checker = false;
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (BoardPositions[i][j] != null) {
+                   if (BoardPositions[i][j].isComputer) {
+                       computer_has_checker = true;
+                   } else {
+                       player_has_checker = true;
+                   }
+                }
+            }
+        }
+
+        return !(player_has_checker && computer_has_checker);
+    }
+
+    public static void makePlayerMove() {
+
+    }
+
+    public static void makeComputerMove() {
+
+    }
+
     public static void main(String args[]) {
         Game t = new Game();
         JFrame jf = new JFrame();
@@ -101,9 +138,42 @@ public class Game extends JPanel {
         // JF Action Listener
         jf.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e){
-                BoardPositions[0][0] =  BoardPositions[0][1];
-                BoardPositions[0][1] = null;
+                // Cleanup the temp array
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        TempPositions[i][j] = null;
+                    }
+                }
+
+                int y = e.getY() / 100;
+                int x = e.getX() / 100;
+
+                if (playerMove) {
+                    if (BoardPositions[y][x] != null && !BoardPositions[y][x].isComputer) { // if is a player's checker
+                        if (y - 1 > 0 && x - 1 > 0 && BoardPositions[y - 1][x - 1] == null) { // if the top left position is free
+                            TempPositions[y - 1][x - 1] = new PlayerChecker();
+                            TempPositions[y - 1][x - 1].setPosition(100 * (x - 1) + 15, 100 * (y - 1) + 15);
+                        }
+
+                        if (y - 1 > 0 && x + 1 < 8 && BoardPositions[y - 1][x + 1] == null) { // if the top right position is free
+                            TempPositions[y - 1][x + 1] = new PlayerChecker();
+                            TempPositions[y - 1][x + 1].setPosition(100 * (x + 1) + 15, 100 * (y - 1) + 15);
+                        }
+                    }
+                }
+                // BoardPositions[e.getY() / 100][e.getX() / 100] = null;
+                jf.repaint();
             }
         });
+
+        // Main Game loop
+        while (true) {
+            makePlayerMove();
+
+            if (checkWin()) {
+                break;
+            }
+            makeComputerMove();
+        }
     }
 }
