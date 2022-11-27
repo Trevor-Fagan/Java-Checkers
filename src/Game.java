@@ -2,15 +2,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Random;
 
 public class Game extends JPanel {
     static Player main_player = new Player();
     static ComputerPlayer computer_player = new ComputerPlayer();
+    static public int BoardPositions[][] = new int[8][8];
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(new Color(78, 54, 185));
+        g2.setColor(new Color(198, 16, 16));
 
         // Draw the checker background board
         int checker_offset = 0;
@@ -26,22 +30,27 @@ public class Game extends JPanel {
             }
         }
 
-        // Draw each of the individual checkerså
-        g2.setColor(Color.BLACK);
+        // Draw each of the individual checkers
         for (int i = 0; i < main_player.checkers.length; i++) {
-            g2.fillOval(main_player.checkers[i].xpos, main_player.checkers[i].ypos, 70, 70);
+            g2.setColor(new Color(233, 8, 8));
+            g2.fillOval(main_player.checkers[i].xpos, main_player.checkers[i].ypos + 8, 70, 50);
+            g2.setColor(new Color(242, 120, 120));
+            g2.fillOval(main_player.checkers[i].xpos, main_player.checkers[i].ypos, 70, 50);
         }
 
         // Draw each of the individual checkers
-        g2.setColor(new Color(11, 126, 141));
         for (int i = 0; i < computer_player.checkers.length; i++) {
-            g2.fillOval(computer_player.checkers[i].xpos, computer_player.checkers[i].ypos, 70, 70);
+            g2.setColor(new Color(142, 142, 142));
+            g2.fillOval(computer_player.checkers[i].xpos, computer_player.checkers[i].ypos + 8, 70, 50);
+            g2.setColor(new Color(198, 198, 198));
+            g2.fillOval(computer_player.checkers[i].xpos, computer_player.checkers[i].ypos, 70, 50);
         }
     }
     public static void main(String args[]) {
         Game t = new Game();
         JFrame jf = new JFrame();
 
+        // JF Setup
         jf.setTitle("Checkers - Trevor Fagan");
         jf.setSize(800, 800);
         jf.setVisible(true);
@@ -49,5 +58,13 @@ public class Game extends JPanel {
         jf.setLocationRelativeTo(null);
         jf.add(t);
         jf.validate();
+        t.setBackground(Color.BLACK);
+
+        // JF Action Listener
+        jf.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e){
+
+            }
+        });
     }
 }
