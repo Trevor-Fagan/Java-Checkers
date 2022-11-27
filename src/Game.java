@@ -10,6 +10,9 @@ public class Game extends JPanel {
     static public PlayerChecker BoardPositions[][] = new PlayerChecker[8][8];
     static public PlayerChecker TempPositions[][] = new PlayerChecker[8][8];
     static private boolean playerMove = true;
+    static private int last_x;
+    static private int last_y;
+    static private boolean playerMadeMove = false;
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -82,7 +85,9 @@ public class Game extends JPanel {
     }
 
     public static void makeComputerMove() {
-
+        // Check if taking a checker is possible
+        // Check if making a king is possible
+        // Choose randomly to move forward
     }
 
     public static void main(String args[]) {
@@ -138,6 +143,13 @@ public class Game extends JPanel {
         // JF Action Listener
         jf.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e){
+                if (TempPositions[e.getY() / 100][e.getX() / 100] != null) {
+                    BoardPositions[e.getY() / 100][e.getX() / 100] = BoardPositions[last_y][last_x];
+                    BoardPositions[e.getY() / 100][e.getX() / 100].setPosition((e.getX() / 100) * 100 + 15, (e.getY() / 100) * 100 + 15);
+                    BoardPositions[last_y][last_x] = null;
+                    playerMadeMove = true;
+                }
+
                 // Cleanup the temp array
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
@@ -161,14 +173,20 @@ public class Game extends JPanel {
                         }
                     }
                 }
-                // BoardPositions[e.getY() / 100][e.getX() / 100] = null;
+
+                last_x = e.getX() / 100;
+                last_y = e.getY() / 100;
                 jf.repaint();
             }
         });
 
         // Main Game loop
         while (true) {
-            makePlayerMove();
+            while (!playerMadeMove) {
+
+            }
+
+            playerMadeMove = false;
 
             if (checkWin()) {
                 break;
