@@ -9,7 +9,7 @@ import java.util.Random;
 public class Game extends JPanel {
     static Player main_player = new Player();
     static ComputerPlayer computer_player = new ComputerPlayer();
-    static public int BoardPositions[][] = new int[8][8];
+    static public PlayerChecker BoardPositions[][] = new PlayerChecker[8][8];
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -30,20 +30,22 @@ public class Game extends JPanel {
             }
         }
 
-        // Draw each of the individual checkers
-        for (int i = 0; i < main_player.checkers.length; i++) {
-            g2.setColor(new Color(233, 8, 8));
-            g2.fillOval(main_player.checkers[i].xpos, main_player.checkers[i].ypos + 8, 70, 50);
-            g2.setColor(new Color(242, 120, 120));
-            g2.fillOval(main_player.checkers[i].xpos, main_player.checkers[i].ypos, 70, 50);
-        }
-
-        // Draw each of the individual checkers
-        for (int i = 0; i < computer_player.checkers.length; i++) {
-            g2.setColor(new Color(142, 142, 142));
-            g2.fillOval(computer_player.checkers[i].xpos, computer_player.checkers[i].ypos + 8, 70, 50);
-            g2.setColor(new Color(198, 198, 198));
-            g2.fillOval(computer_player.checkers[i].xpos, computer_player.checkers[i].ypos, 70, 50);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (BoardPositions[i][j] != null) {
+                    if (BoardPositions[i][j].isComputer) {
+                        g2.setColor(new Color(142, 142, 142));
+                        g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos + 8, 70, 50);
+                        g2.setColor(new Color(198, 198, 198));
+                        g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos, 70, 50);
+                    } else {
+                        g2.setColor(new Color(233, 8, 8));
+                        g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos + 8, 70, 50);
+                        g2.setColor(new Color(242, 120, 120));
+                        g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos, 70, 50);
+                    }
+                }
+            }
         }
     }
     public static void main(String args[]) {
@@ -60,10 +62,47 @@ public class Game extends JPanel {
         jf.validate();
         t.setBackground(Color.BLACK);
 
+        // Initialize the checkers
+        int x_offset = 15;
+        int y_offset = 15;
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (i == 0 || i == 1 || i == 2) {
+                    if (i % 2 == 0) {
+                        if (j % 2 == 1) {
+                            BoardPositions[i][j] = new PlayerChecker();
+                            BoardPositions[i][j].makeComputer();
+                            BoardPositions[i][j].setPosition(100 * j + x_offset, i * 100 + y_offset);
+                        }
+                    } else {
+                        if (j % 2 == 0) {
+                            BoardPositions[i][j] = new PlayerChecker();
+                            BoardPositions[i][j].makeComputer();
+                            BoardPositions[i][j].setPosition(100 * j + x_offset, i * 100 + y_offset);
+                        }
+                    }
+                } else if (i == 5 || i == 6 || i == 7) {
+                    if (i % 2 == 0) {
+                        if (j % 2 == 1) {
+                            BoardPositions[i][j] = new PlayerChecker();
+                            BoardPositions[i][j].setPosition(100 * j + x_offset, i * 100 + y_offset);
+                        }
+                    } else {
+                        if (j % 2 == 0) {
+                            BoardPositions[i][j] = new PlayerChecker();
+                            BoardPositions[i][j].setPosition(100 * j + x_offset, i * 100 + y_offset);
+                        }
+                    }
+                }
+            }
+        }
+
         // JF Action Listener
         jf.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e){
-
+                BoardPositions[0][0] =  BoardPositions[0][1];
+                BoardPositions[0][1] = null;
             }
         });
     }

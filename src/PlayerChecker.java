@@ -1,6 +1,7 @@
 public class PlayerChecker {
     public int xpos;
     public int ypos;
+    public boolean isComputer = false;
 
     PlayerChecker () {
         this.xpos = 0;
@@ -10,5 +11,9 @@ public class PlayerChecker {
     public void setPosition(int x, int y) {
         this.xpos = x;
         this.ypos = y;
+    }
+
+    public void makeComputer () {
+        this.isComputer = true;
     }
 }
