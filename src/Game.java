@@ -1,9 +1,11 @@
 import java.awt.*;
+import java.util.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import java.util.Random;
 
 public class Game extends JPanel {
@@ -12,7 +14,6 @@ public class Game extends JPanel {
     static private boolean playerMove = true;
     static private int last_x;
     static private int last_y;
-    static private boolean playerMadeMove = false;
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -80,17 +81,59 @@ public class Game extends JPanel {
         return !(player_has_checker && computer_has_checker);
     }
 
-    public static void makePlayerMove() {
-
+    public static int getRandom(int cap) {
+        Random rand = new Random();
+        return rand.nextInt(cap);
     }
 
     public static void makeComputerMove() {
+        List<PlayerChecker> possibleMovers = new ArrayList<PlayerChecker>();
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (BoardPositions[i][j] != null && BoardPositions[i][j].isComputer) {
+                    if (i + 1 < 8 && j - 1 > 0) { // check below to the left
+                        if (BoardPositions[i + 1][j - 1] == null) {
+                            possibleMovers.add(BoardPositions[i][j]);
+                        }
+                    } else if (i + 1 < 8 && j + 1 < 8) { // check below to the right
+                        if (BoardPositions[i + 1][j + 1] == null) {
+                            possibleMovers.add(BoardPositions[i][j]);
+                        }
+                    }
+                }
+            }
+        }
+
         // Check if taking a checker is possible
         // Check if making a king is possible
         // Choose randomly to move forward
+        PlayerChecker the_mover = possibleMovers.get(getRandom(possibleMovers.size()));
+
+        int temp_x_pos = the_mover.xpos / 100 - 1;
+
+        if (temp_x_pos < 0) {
+            temp_x_pos = 0;
+        }
+
+        System.out.println(the_mover.ypos / 100);
+        System.out.println(the_mover.xpos / 100);
+        System.out.println("---------");
+
+        if (BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] == null) {
+            BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] = new PlayerChecker();
+            BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].makeComputer();
+            BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].setPosition(the_mover.xpos - 100, the_mover.ypos + 100);
+        } else {
+            BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1] = new PlayerChecker();
+            BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].makeComputer();
+            BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].setPosition(the_mover.xpos + 100, the_mover.ypos + 100);
+       }
+
+        BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100] = null;
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws InterruptedException {
         Game t = new Game();
         JFrame jf = new JFrame();
 
@@ -147,7 +190,7 @@ public class Game extends JPanel {
                     BoardPositions[e.getY() / 100][e.getX() / 100] = BoardPositions[last_y][last_x];
                     BoardPositions[e.getY() / 100][e.getX() / 100].setPosition((e.getX() / 100) * 100 + 15, (e.getY() / 100) * 100 + 15);
                     BoardPositions[last_y][last_x] = null;
-                    playerMadeMove = true;
+                    playerMove = false;
                 }
 
                 // Cleanup the temp array
@@ -182,16 +225,14 @@ public class Game extends JPanel {
 
         // Main Game loop
         while (true) {
-            while (!playerMadeMove) {
-
+            while (playerMove) {
+                Thread.sleep(500);
             }
 
-            playerMadeMove = false;
-
-            if (checkWin()) {
-                break;
-            }
             makeComputerMove();
+            jf.repaint();
+
+            playerMove = true;
         }
     }
 }
