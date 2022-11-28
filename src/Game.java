@@ -116,10 +116,6 @@ public class Game extends JPanel {
             temp_x_pos = 0;
         }
 
-        System.out.println(the_mover.ypos / 100);
-        System.out.println(the_mover.xpos / 100);
-        System.out.println("---------");
-
         if (BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] == null) {
             BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] = new PlayerChecker();
             BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].makeComputer();
@@ -186,9 +182,16 @@ public class Game extends JPanel {
         // JF Action Listener
         jf.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e){
-                if (TempPositions[e.getY() / 100][e.getX() / 100] != null) {
+                if (TempPositions[e.getY() / 100][e.getX() / 100] != null) { // if the position selected is a vision square
                     BoardPositions[e.getY() / 100][e.getX() / 100] = BoardPositions[last_y][last_x];
                     BoardPositions[e.getY() / 100][e.getX() / 100].setPosition((e.getX() / 100) * 100 + 15, (e.getY() / 100) * 100 + 15);
+
+                    if (last_x - e.getX() / 100 == 2) { // left
+                        BoardPositions[last_y - 1][last_x - 1] = null;
+                    } else if (e.getX() / 100 - last_x == 2) { // right
+                        BoardPositions[last_y - 1][last_x + 1] = null;
+                    }
+
                     BoardPositions[last_y][last_x] = null;
                     playerMove = false;
                 }
@@ -208,11 +211,21 @@ public class Game extends JPanel {
                         if (y - 1 > 0 && x - 1 > 0 && BoardPositions[y - 1][x - 1] == null) { // if the top left position is free
                             TempPositions[y - 1][x - 1] = new PlayerChecker();
                             TempPositions[y - 1][x - 1].setPosition(100 * (x - 1) + 15, 100 * (y - 1) + 15);
+                        } else {    // check if can take checker to the left
+                            if (y - 2 > 0 && x - 2 > 0 && BoardPositions[y - 2][x - 2] == null && BoardPositions[y - 1][x - 1].isComputer) {
+                                TempPositions[y - 2][x - 2] = new PlayerChecker();
+                                TempPositions[y - 2][x - 2].setPosition(100 * (x - 2) + 15, 100 * (y - 2) + 15);
+                            }
                         }
 
                         if (y - 1 > 0 && x + 1 < 8 && BoardPositions[y - 1][x + 1] == null) { // if the top right position is free
                             TempPositions[y - 1][x + 1] = new PlayerChecker();
                             TempPositions[y - 1][x + 1].setPosition(100 * (x + 1) + 15, 100 * (y - 1) + 15);
+                        } else {
+                            if (y - 2 > 0 && x + 2 < 8 && BoardPositions[y - 2][x + 2] == null && BoardPositions[y - 1][x + 1].isComputer) {
+                                TempPositions[y - 2][x + 2] = new PlayerChecker();
+                                TempPositions[y - 2][x + 2].setPosition(100 * (x + 2) + 15, 100 * (y - 2) + 15);
+                            }
                         }
                     }
                 }
