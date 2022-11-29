@@ -111,26 +111,20 @@ public class Game extends JPanel {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (BoardPositions[i][j] != null && BoardPositions[i][j].isComputer) {
-                    if (i + 1 < 8 && j - 1 > 0) { // check below to the left
-                        if (BoardPositions[i + 1][j - 1] != null && !BoardPositions[i + 1][j - 1].isComputer) {
-                            if (i + 2 < 8 && j - 2 > 0) {
-                                if (BoardPositions[i + 2][j - 2] == null) {
-                                    BoardPositions[i+2][j-2] = BoardPositions[i][j];
-                                    BoardPositions[i+2][j-2].setPosition(BoardPositions[i+2][j-2].xpos - 200, BoardPositions[i+2][j-2].ypos + 200);
-                                    BoardPositions[i+1][j-1] = null;
-                                    BoardPositions[i][j] = null;
-                                    made_move = true;
-                                }
-                            }
-                        }
+                    if (i + 1 < 8 && j - 1 > 0 && (BoardPositions[i + 1][j - 1] != null && !BoardPositions[i + 1][j - 1].isComputer) && (i + 2 < 8 && j - 2 > 0) && (BoardPositions[i + 2][j - 2] == null)) { // check below to the left
+                        BoardPositions[i+2][j-2] = new PlayerChecker();
+                        BoardPositions[i+2][j-2].isComputer = true;
+                        BoardPositions[i+2][j-2].setPosition(BoardPositions[i][j].xpos - 200, BoardPositions[i][j].ypos + 200);
+                        BoardPositions[i+1][j-1] = null;
+                        BoardPositions[i][j] = null;
+                        made_move = true;
                     } else if (j + 1 < 8 && i + 1 < 8) { // check below to the right
                         if (BoardPositions[i + 1][j + 1] != null && !BoardPositions[i + 1][j + 1].isComputer) {
                             if (j + 2 < 8 && i + 2 < 8) {
-                                System.out.println("Here");
                                 if (BoardPositions[i + 2][j + 2] == null) {
-                                    System.out.println("Working");
-                                    BoardPositions[i+2][j+2] = BoardPositions[i][j];
-                                    BoardPositions[i+2][j+2].setPosition(BoardPositions[i+2][j+2].xpos + 200, BoardPositions[i+2][j+2].ypos + 200);
+                                    BoardPositions[i+2][j+2] = new PlayerChecker();
+                                    BoardPositions[i+2][j+2].isComputer = true;
+                                    BoardPositions[i+2][j+2].setPosition(BoardPositions[i][j].xpos + 200, BoardPositions[i][j].ypos + 200);
                                     BoardPositions[i+1][j+1] = null;
                                     BoardPositions[i][j] = null;
                                     made_move = true;
@@ -270,6 +264,7 @@ public class Game extends JPanel {
                 last_x = e.getX() / 100;
                 last_y = e.getY() / 100;
                 jf.repaint();
+                jf.validate();
             }
         });
 
