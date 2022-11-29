@@ -105,28 +105,65 @@ public class Game extends JPanel {
             }
         }
 
+        boolean made_move = false;
+
         // Check if taking a checker is possible
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (BoardPositions[i][j] != null && BoardPositions[i][j].isComputer) {
+                    if (i + 1 < 8 && j - 1 > 0) { // check below to the left
+                        if (BoardPositions[i + 1][j - 1] != null && !BoardPositions[i + 1][j - 1].isComputer) {
+                            if (i + 2 < 8 && j - 2 > 0) {
+                                if (BoardPositions[i + 2][j - 2] == null) {
+                                    BoardPositions[i+2][j-2] = BoardPositions[i][j];
+                                    BoardPositions[i+2][j-2].setPosition(BoardPositions[i+2][j-2].xpos - 200, BoardPositions[i+2][j-2].ypos + 200);
+                                    BoardPositions[i+1][j-1] = null;
+                                    BoardPositions[i][j] = null;
+                                    made_move = true;
+                                }
+                            }
+                        }
+                    } else if (j + 1 < 8 && i + 1 < 8) { // check below to the right
+                        if (BoardPositions[i + 1][j + 1] != null && !BoardPositions[i + 1][j + 1].isComputer) {
+                            if (j + 2 < 8 && i + 2 < 8) {
+                                System.out.println("Here");
+                                if (BoardPositions[i + 2][j + 2] == null) {
+                                    System.out.println("Working");
+                                    BoardPositions[i+2][j+2] = BoardPositions[i][j];
+                                    BoardPositions[i+2][j+2].setPosition(BoardPositions[i+2][j+2].xpos + 200, BoardPositions[i+2][j+2].ypos + 200);
+                                    BoardPositions[i+1][j+1] = null;
+                                    BoardPositions[i][j] = null;
+                                    made_move = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         // Check if making a king is possible
         // Choose randomly to move forward
-        PlayerChecker the_mover = possibleMovers.get(getRandom(possibleMovers.size()));
+        if (!made_move) {
+            PlayerChecker the_mover = possibleMovers.get(getRandom(possibleMovers.size()));
 
-        int temp_x_pos = the_mover.xpos / 100 - 1;
+            int temp_x_pos = the_mover.xpos / 100 - 1;
 
-        if (temp_x_pos < 0) {
-            temp_x_pos = 0;
+            if (temp_x_pos < 0) {
+                temp_x_pos = 0;
+            }
+
+            if (BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] == null) {
+                BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] = new PlayerChecker();
+                BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].makeComputer();
+                BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].setPosition(the_mover.xpos - 100, the_mover.ypos + 100);
+            } else {
+                BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1] = new PlayerChecker();
+                BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].makeComputer();
+                BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].setPosition(the_mover.xpos + 100, the_mover.ypos + 100);
+            }
+
+            BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100] = null;
         }
-
-        if (BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] == null) {
-            BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] = new PlayerChecker();
-            BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].makeComputer();
-            BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].setPosition(the_mover.xpos - 100, the_mover.ypos + 100);
-        } else {
-            BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1] = new PlayerChecker();
-            BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].makeComputer();
-            BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].setPosition(the_mover.xpos + 100, the_mover.ypos + 100);
-       }
-
-        BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100] = null;
     }
 
     public static void main(String args[]) throws InterruptedException {
@@ -208,17 +245,17 @@ public class Game extends JPanel {
 
                 if (playerMove) {
                     if (BoardPositions[y][x] != null && !BoardPositions[y][x].isComputer) { // if is a player's checker
-                        if (y - 1 > 0 && x - 1 > 0 && BoardPositions[y - 1][x - 1] == null) { // if the top left position is free
+                        if (y - 1 >= 0 && x - 1 >= 0 && BoardPositions[y - 1][x - 1] == null) { // if the top left position is free
                             TempPositions[y - 1][x - 1] = new PlayerChecker();
                             TempPositions[y - 1][x - 1].setPosition(100 * (x - 1) + 15, 100 * (y - 1) + 15);
                         } else {    // check if can take checker to the left
-                            if (y - 2 > 0 && x - 2 > 0 && BoardPositions[y - 2][x - 2] == null && BoardPositions[y - 1][x - 1].isComputer) {
+                            if (y - 2 >= 0 && x - 2 >= 0 && BoardPositions[y - 2][x - 2] == null && BoardPositions[y - 1][x - 1].isComputer) {
                                 TempPositions[y - 2][x - 2] = new PlayerChecker();
                                 TempPositions[y - 2][x - 2].setPosition(100 * (x - 2) + 15, 100 * (y - 2) + 15);
                             }
                         }
 
-                        if (y - 1 > 0 && x + 1 < 8 && BoardPositions[y - 1][x + 1] == null) { // if the top right position is free
+                        if (y - 1 >= 0 && x + 1 < 8 && BoardPositions[y - 1][x + 1] == null) { // if the top right position is free
                             TempPositions[y - 1][x + 1] = new PlayerChecker();
                             TempPositions[y - 1][x + 1].setPosition(100 * (x + 1) + 15, 100 * (y - 1) + 15);
                         } else {
