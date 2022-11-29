@@ -92,7 +92,7 @@ public class Game extends JPanel {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (BoardPositions[i][j] != null && BoardPositions[i][j].isComputer) {
-                    if (i + 1 < 8 && j - 1 > 0) { // check below to the left
+                    if (i + 1 < 8 && j - 1 >= 0) { // check below to the left
                         if (BoardPositions[i + 1][j - 1] == null) {
                             possibleMovers.add(BoardPositions[i][j]);
                         }
@@ -111,7 +111,7 @@ public class Game extends JPanel {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (BoardPositions[i][j] != null && BoardPositions[i][j].isComputer) {
-                    if (i + 1 < 8 && j - 1 > 0 && (BoardPositions[i + 1][j - 1] != null && !BoardPositions[i + 1][j - 1].isComputer) && (i + 2 < 8 && j - 2 > 0) && (BoardPositions[i + 2][j - 2] == null)) { // check below to the left
+                    if (i + 1 < 8 && j - 1 >= 0 && (BoardPositions[i + 1][j - 1] != null && !BoardPositions[i + 1][j - 1].isComputer) && (i + 2 < 8 && j - 2 >= 0) && (BoardPositions[i + 2][j - 2] == null)) { // check below to the left
                         BoardPositions[i+2][j-2] = new PlayerChecker();
                         BoardPositions[i+2][j-2].isComputer = true;
                         BoardPositions[i+2][j-2].setPosition(BoardPositions[i][j].xpos - 200, BoardPositions[i][j].ypos + 200);
@@ -141,12 +141,14 @@ public class Game extends JPanel {
             PlayerChecker the_mover = possibleMovers.get(getRandom(possibleMovers.size()));
 
             int temp_x_pos = the_mover.xpos / 100 - 1;
+            boolean can_go_left = true;
 
             if (temp_x_pos < 0) {
                 temp_x_pos = 0;
+                can_go_left = false;
             }
 
-            if (BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] == null) {
+            if (BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] == null && can_go_left) {
                 BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] = new PlayerChecker();
                 BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].makeComputer();
                 BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].setPosition(the_mover.xpos - 100, the_mover.ypos + 100);
@@ -253,7 +255,7 @@ public class Game extends JPanel {
                             TempPositions[y - 1][x + 1] = new PlayerChecker();
                             TempPositions[y - 1][x + 1].setPosition(100 * (x + 1) + 15, 100 * (y - 1) + 15);
                         } else {
-                            if (y - 2 > 0 && x + 2 < 8 && BoardPositions[y - 2][x + 2] == null && BoardPositions[y - 1][x + 1].isComputer) {
+                            if (y - 2 >= 0 && x + 2 < 8 && BoardPositions[y - 2][x + 2] == null && BoardPositions[y - 1][x + 1].isComputer) {
                                 TempPositions[y - 2][x + 2] = new PlayerChecker();
                                 TempPositions[y - 2][x + 2].setPosition(100 * (x + 2) + 15, 100 * (y - 2) + 15);
                             }
