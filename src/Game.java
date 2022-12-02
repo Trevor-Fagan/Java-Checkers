@@ -1,12 +1,12 @@
 import java.awt.*;
 import java.util.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Random;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class Game extends JPanel {
     static public PlayerChecker BoardPositions[][] = new PlayerChecker[8][8];
@@ -14,6 +14,9 @@ public class Game extends JPanel {
     static private boolean playerMove = true;
     static private int last_x;
     static private int last_y;
+    static private int r = 233;
+    static private int g = 8;
+    static private int b = 8;
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -43,9 +46,9 @@ public class Game extends JPanel {
                         g2.setColor(new Color(198, 198, 198));
                         g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos, 70, 50);
                     } else {
-                        g2.setColor(new Color(233, 8, 8));
+                        g2.setColor(new Color(108, 108, 108));
                         g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos + 8, 70, 50);
-                        g2.setColor(new Color(242, 120, 120));
+                        g2.setColor(new Color(this.r, this.g, this.b));
                         g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos, 70, 50);
                     }
                 }
@@ -211,6 +214,31 @@ public class Game extends JPanel {
                 }
             }
         }
+
+        // Keyboard Listener
+        jf.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == 'n') {
+                    r = getRandom(255);
+                    g = getRandom(255);
+                    b = getRandom(255);
+
+                    jf.revalidate();
+                    jf.repaint();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
 
         // JF Action Listener
         jf.addMouseListener(new MouseAdapter() {
