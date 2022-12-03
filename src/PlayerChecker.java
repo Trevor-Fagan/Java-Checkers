@@ -2,6 +2,7 @@ public class PlayerChecker {
     public int xpos;
     public int ypos;
     public boolean isComputer = false;
+    public boolean isKing = false;
 
     PlayerChecker () {
         this.xpos = 0;

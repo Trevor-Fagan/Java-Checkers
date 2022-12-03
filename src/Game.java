@@ -17,50 +17,74 @@ public class Game extends JPanel {
     static private int r = 233;
     static private int g = 8;
     static private int b = 8;
+    static private boolean gameOver = false;
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(new Color(198, 16, 16));
 
-        // Draw the checker background board
-        int checker_offset = 0;
-        for (int i = 0; i < 8; i++) {
-            if (i % 2 == 0) {
-                checker_offset = 0;
-            } else {
-                checker_offset = 100;
+        if (!gameOver) {
+            // Draw the checker background board
+            int checker_offset = 0;
+            for (int i = 0; i < 8; i++) {
+                if (i % 2 == 0) {
+                    checker_offset = 0;
+                } else {
+                    checker_offset = 100;
+                }
+
+                for (int j = 0; j < 8; j += 2) {
+                    g2.fillRect(j * 100 + checker_offset, i * 100, 100, 100);
+                }
             }
 
-            for (int j = 0; j < 8; j += 2) {
-                g2.fillRect(j * 100 + checker_offset, i * 100, 100, 100);
-            }
-        }
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (BoardPositions[i][j] != null) {
-                    if (BoardPositions[i][j].isComputer) {
-                        g2.setColor(new Color(142, 142, 142));
-                        g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos + 8, 70, 50);
-                        g2.setColor(new Color(198, 198, 198));
-                        g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos, 70, 50);
-                    } else {
-                        g2.setColor(new Color(108, 108, 108));
-                        g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos + 8, 70, 50);
-                        g2.setColor(new Color(this.r, this.g, this.b));
-                        g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos, 70, 50);
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (BoardPositions[i][j] != null) {
+                        if (BoardPositions[i][j].isComputer) {
+                            g2.setColor(new Color(142, 142, 142));
+                            g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos + 8, 70, 50);
+                            g2.setColor(new Color(198, 198, 198));
+                            g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos, 70, 50);
+                        } else {
+                            g2.setColor(new Color(108, 108, 108));
+                            g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos + 8, 70, 50);
+                            g2.setColor(new Color(this.r, this.g, this.b));
+                            g2.fillOval(BoardPositions[i][j].xpos, BoardPositions[i][j].ypos, 70, 50);
+                        }
                     }
                 }
             }
-        }
 
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (TempPositions[i][j] != null) {
-                    g2.setColor(Color.BLUE);
-                    g2.fillOval(TempPositions[i][j].xpos, TempPositions[i][j].ypos + 8, 70, 50);
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (TempPositions[i][j] != null) {
+                        g2.setColor(Color.BLUE);
+                        g2.fillOval(TempPositions[i][j].xpos, TempPositions[i][j].ypos + 8, 70, 50);
+                    }
                 }
+            }
+        } else {
+            g2.setColor(new Color(255, 255, 255));
+            Font font = new Font("Serif", Font.PLAIN, 96);
+            g2.setFont(font);
+            g2.drawString("Game Over", 40, 120);
+
+            boolean playerWon = true;
+
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (BoardPositions[i][j] != null && BoardPositions[i][j].isComputer) {
+                        playerWon = false;
+                    }
+                }
+            }
+
+            if (playerWon) {
+                g2.drawString("You win!", 40, 220);
+            } else {
+                g2.drawString("You lose!", 40, 220);
             }
         }
     }
@@ -120,6 +144,11 @@ public class Game extends JPanel {
                         BoardPositions[i+2][j-2].setPosition(BoardPositions[i][j].xpos - 200, BoardPositions[i][j].ypos + 200);
                         BoardPositions[i+1][j-1] = null;
                         BoardPositions[i][j] = null;
+
+                        if (i + 2 == 7) { // check if was made king
+                            BoardPositions[i + 2][j + 2].isKing = true;
+                        }
+
                         made_move = true;
                     } else if (j + 1 < 8 && i + 1 < 8) { // check below to the right
                         if (BoardPositions[i + 1][j + 1] != null && !BoardPositions[i + 1][j + 1].isComputer) {
@@ -130,6 +159,11 @@ public class Game extends JPanel {
                                     BoardPositions[i+2][j+2].setPosition(BoardPositions[i][j].xpos + 200, BoardPositions[i][j].ypos + 200);
                                     BoardPositions[i+1][j+1] = null;
                                     BoardPositions[i][j] = null;
+
+                                    if (i + 2 == 7) { // check if was made king
+                                        BoardPositions[i + 2][j + 2].isKing = true;
+                                    }
+
                                     made_move = true;
                                 }
                             }
@@ -138,7 +172,6 @@ public class Game extends JPanel {
                 }
             }
         }
-        // Check if making a king is possible
         // Choose randomly to move forward
         if (!made_move) {
             PlayerChecker the_mover = possibleMovers.get(getRandom(possibleMovers.size()));
@@ -299,9 +332,19 @@ public class Game extends JPanel {
         });
 
         // Main Game loop
-        while (true) {
+        while (!gameOver) {
             while (playerMove) {
+                if (checkWin()) {
+                    gameOver = true;
+                    jf.revalidate();
+                    jf.repaint();
+                }
+
                 Thread.sleep(500);
+            }
+
+            if (checkWin()) {
+                gameOver = true;
             }
 
             makeComputerMove();
