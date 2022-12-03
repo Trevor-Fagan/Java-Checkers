@@ -370,10 +370,14 @@ public class Game extends JPanel {
                         BoardPositions[e.getY() / 100][e.getX() / 100].isKing = true;
                     }
 
-                    if (last_x - e.getX() / 100 == 2) { // left
+                    if (last_x - e.getX() / 100 == 2 && last_y - e.getY() / 100 > 0) { // left and up
                         BoardPositions[last_y - 1][last_x - 1] = null;
-                    } else if (e.getX() / 100 - last_x == 2) { // right
+                    } else if (e.getX() / 100 - last_x == 2 && last_y - e.getY() / 100 > 0) { // right and up
                         BoardPositions[last_y - 1][last_x + 1] = null;
+                    } else if (last_x - e.getX() / 100 == 2 && last_y - e.getY() / 100 < 0) { // left and down
+                        BoardPositions[last_y + 1][last_x - 1] = null;
+                    } else if (e.getX() / 100 - last_x == 2 && last_y - e.getY() / 100 < 0) { // right and down
+                        BoardPositions[last_y + 1][last_x + 1] = null;
                     }
 
                     BoardPositions[last_y][last_x] = null;
@@ -416,20 +420,20 @@ public class Game extends JPanel {
                             TempPositions[y + 1][x - 1] = new PlayerChecker();
                             TempPositions[y + 1][x - 1].setPosition(100 * (x - 1) + 15, 100 * (y + 1) + 15);
                         } else {
-//                            if (y + 2 < 8 && x - 2 >= 0 && BoardPositions[y + 2][x - 2] == null && BoardPositions[y + 1][x - 1].isComputer) {
-//                                TempPositions[y + 2][x - 2] = new PlayerChecker();
-//                                TempPositions[y + 2][x - 2].setPosition(100 * (x - 2) + 15, 100 * (y + 2) + 15);
-//                            }
+                            if (y + 2 < 8 && x - 2 >= 0 && BoardPositions[y + 2][x - 2] == null && BoardPositions[y + 1][x - 1] != null && BoardPositions[y + 1][x - 1].isComputer) {
+                                TempPositions[y + 2][x - 2] = new PlayerChecker();
+                                TempPositions[y + 2][x - 2].setPosition(100 * (x - 2) + 15, 100 * (y + 2) + 15);
+                            }
                         }
 
                         if (BoardPositions[y][x].isKing && y + 1 < 8 && x + 1 < 8 && BoardPositions[y + 1][x + 1] == null) { // if the bottom right position is free
                             TempPositions[y + 1][x + 1] = new PlayerChecker();
                             TempPositions[y + 1][x + 1].setPosition(100 * (x + 1) + 15, 100 * (y + 1) + 15);
                         } else {
-//                            if (y + 2 < 8 && x + 2 < 8 && BoardPositions[y + 2][x + 2] == null && BoardPositions[y + 1][x + 1].isComputer) {
-//                                TempPositions[y + 2][x + 2] = new PlayerChecker();
-//                                TempPositions[y + 2][x + 2].setPosition(100 * (x + 2) + 15, 100 * (y + 2) + 15);
-//                            }
+                            if (y + 2 < 8 && x + 2 < 8 && BoardPositions[y + 2][x + 2] == null && BoardPositions[y + 1][x + 1] != null && BoardPositions[y + 1][x + 1].isComputer) {
+                                TempPositions[y + 2][x + 2] = new PlayerChecker();
+                                TempPositions[y + 2][x + 2].setPosition(100 * (x + 2) + 15, 100 * (y + 2) + 15);
+                            }
                         }
                     }
                 }
