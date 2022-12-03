@@ -128,12 +128,14 @@ public class Game extends JPanel {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (BoardPositions[i][j] != null && BoardPositions[i][j].isComputer) {
+                if (BoardPositions[i][j] != null && BoardPositions[i][j].isComputer) { // if is computer checker
                     if (i + 1 < 8 && j - 1 >= 0) { // check below to the left
                         if (BoardPositions[i + 1][j - 1] == null) {
                             possibleMovers.add(BoardPositions[i][j]);
                         }
-                    } else if (i + 1 < 8 && j + 1 < 8) { // check below to the right
+                    }
+
+                    if (i + 1 < 8 && j + 1 < 8) { // check below to the right
                         if (BoardPositions[i + 1][j + 1] == null) {
                             possibleMovers.add(BoardPositions[i][j]);
                         }
@@ -144,7 +146,9 @@ public class Game extends JPanel {
                             if (BoardPositions[i - 1][j - 1] == null) {
                                 possibleMovers.add(BoardPositions[i][j]);
                             }
-                        } else if (i - 1 >= 0 && j + 1 < 8) { // check above to the right
+                        }
+
+                        if (i - 1 >= 0 && j + 1 < 8) { // check above to the right
                             if (BoardPositions[i - 1][j + 1] == null) {
                                 possibleMovers.add(BoardPositions[i][j]);
                             }
@@ -224,63 +228,67 @@ public class Game extends JPanel {
         }
         // Choose randomly to move forward
         if (!made_move) {
-            PlayerChecker the_mover = possibleMovers.get(getRandom(possibleMovers.size()));
+            if (possibleMovers.size() == 0) {
+                gameOver = true;
+            } else {
+                PlayerChecker the_mover = possibleMovers.get(getRandom(possibleMovers.size()));
 
-            int temp_x_pos = the_mover.xpos / 100 - 1;
-            boolean can_go_left = true;
+                int temp_x_pos = the_mover.xpos / 100 - 1;
+                boolean can_go_left = true;
 
-            if (temp_x_pos < 0) {
-                temp_x_pos = 0;
-                can_go_left = false;
+                if (temp_x_pos < 0) {
+                    temp_x_pos = 0;
+                    can_go_left = false;
+                }
+
+                if (the_mover.ypos / 100 + 1 < 8 && the_mover.xpos / 100 - 1 >= 0 && BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] == null && can_go_left) { // move down to the left
+                    BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] = new PlayerChecker();
+                    BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].makeComputer();
+                    BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].setPosition(the_mover.xpos - 100, the_mover.ypos + 100);
+
+                    if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
+                        BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].isKing = true;
+                    }
+
+                    if (the_mover.ypos / 100 + 1 == 7) {
+                        BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].isKing = true;
+                    }
+                } else if (the_mover.ypos / 100 - 1 >= 0 && the_mover.xpos / 100 - 1 >= 0 && BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos] == null && can_go_left && BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) { // move up to the left
+                    BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos] = new PlayerChecker();
+                    BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos].makeComputer();
+                    BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos].setPosition(the_mover.xpos - 100, the_mover.ypos - 100);
+
+                    if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
+                        BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos].isKing = true;
+                    }
+
+                    if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
+                        BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos].isKing = true;
+                    }
+                } else if (the_mover.ypos / 100 - 1 >= 0 && the_mover.xpos / 100 + 1 < 8 && BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1] == null && BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) { // move up to the right
+                    BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1] = new PlayerChecker();
+                    BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1].makeComputer();
+                    BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1].setPosition(the_mover.xpos + 100, the_mover.ypos - 100);
+
+                    if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
+                        BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1].isKing = true;
+                    }
+                } else { // move down to the right
+                    BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1] = new PlayerChecker();
+                    BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].makeComputer();
+                    BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].setPosition(the_mover.xpos + 100, the_mover.ypos + 100);
+
+                    if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
+                        BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].isKing = true;
+                    }
+
+                    if (the_mover.ypos / 100 + 1 == 7) {
+                        BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].isKing = true;
+                    }
+                }
+
+                BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100] = null;
             }
-
-            if (the_mover.ypos / 100 + 1 < 8 && the_mover.xpos / 100 - 1 >= 0 && BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] == null && can_go_left) { // move down to the left
-                BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos] = new PlayerChecker();
-                BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].makeComputer();
-                BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].setPosition(the_mover.xpos - 100, the_mover.ypos + 100);
-
-                if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
-                    BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].isKing = true;
-                }
-
-                if (the_mover.ypos / 100 + 1 == 7) {
-                    BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].isKing = true;
-                }
-            } else if (the_mover.ypos / 100 - 1 >= 0 && the_mover.xpos / 100 - 1 >= 0 && BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos] == null && can_go_left && BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) { // move up to the left
-                BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos] = new PlayerChecker();
-                BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos].makeComputer();
-                BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos].setPosition(the_mover.xpos - 100, the_mover.ypos - 100);
-
-                if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
-                    BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos].isKing = true;
-                }
-
-                if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
-                    BoardPositions[the_mover.ypos / 100 - 1][temp_x_pos].isKing = true;
-                }
-            } else if (the_mover.ypos / 100 - 1 >= 0 && the_mover.xpos / 100 + 1 < 8 && BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1] == null && BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) { // move up to the right
-                BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1] = new PlayerChecker();
-                BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1].makeComputer();
-                BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1].setPosition(the_mover.xpos + 100, the_mover.ypos - 100);
-
-                if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
-                    BoardPositions[the_mover.ypos / 100 - 1][the_mover.xpos / 100 + 1].isKing = true;
-                }
-            } else { // move down to the right
-                BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1] = new PlayerChecker();
-                BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].makeComputer();
-                BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].setPosition(the_mover.xpos + 100, the_mover.ypos + 100);
-
-                if (BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100].isKing) {
-                    BoardPositions[the_mover.ypos / 100 + 1][the_mover.xpos / 100 + 1].isKing = true;
-                }
-
-                if (the_mover.ypos / 100 + 1 == 7) {
-                    BoardPositions[the_mover.ypos / 100 + 1][temp_x_pos].isKing = true;
-                }
-            }
-
-            BoardPositions[the_mover.ypos / 100][the_mover.xpos / 100] = null;
         }
     }
 
@@ -420,7 +428,7 @@ public class Game extends JPanel {
                             TempPositions[y + 1][x - 1] = new PlayerChecker();
                             TempPositions[y + 1][x - 1].setPosition(100 * (x - 1) + 15, 100 * (y + 1) + 15);
                         } else {
-                            if (y + 2 < 8 && x - 2 >= 0 && BoardPositions[y + 2][x - 2] == null && BoardPositions[y + 1][x - 1] != null && BoardPositions[y + 1][x - 1].isComputer) {
+                            if (y + 2 < 8 && x - 2 >= 0 && BoardPositions[y][x].isKing && BoardPositions[y + 2][x - 2] == null && BoardPositions[y + 1][x - 1] != null && BoardPositions[y + 1][x - 1].isComputer) {
                                 TempPositions[y + 2][x - 2] = new PlayerChecker();
                                 TempPositions[y + 2][x - 2].setPosition(100 * (x - 2) + 15, 100 * (y + 2) + 15);
                             }
@@ -430,7 +438,7 @@ public class Game extends JPanel {
                             TempPositions[y + 1][x + 1] = new PlayerChecker();
                             TempPositions[y + 1][x + 1].setPosition(100 * (x + 1) + 15, 100 * (y + 1) + 15);
                         } else {
-                            if (y + 2 < 8 && x + 2 < 8 && BoardPositions[y + 2][x + 2] == null && BoardPositions[y + 1][x + 1] != null && BoardPositions[y + 1][x + 1].isComputer) {
+                            if (y + 2 < 8 && x + 2 < 8 && BoardPositions[y][x].isKing && BoardPositions[y + 2][x + 2] == null && BoardPositions[y + 1][x + 1] != null && BoardPositions[y + 1][x + 1].isComputer) {
                                 TempPositions[y + 2][x + 2] = new PlayerChecker();
                                 TempPositions[y + 2][x + 2].setPosition(100 * (x + 2) + 15, 100 * (y + 2) + 15);
                             }
@@ -442,6 +450,7 @@ public class Game extends JPanel {
                 last_y = e.getY() / 100;
                 jf.repaint();
                 jf.validate();
+                jf.revalidate();
             }
         });
 
